@@ -1,0 +1,34 @@
+# .github/workflows/ci.yml
+name: CI
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  kanban:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/2a-kanban-board
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - run: npm run test:coverage
+
+  auth-testing:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/7a-auth-testing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - uses: cypress-io/github-action@v6
+        with:
+          working-directory: projects/7a-auth-testing
+          start: npm run dev
+          wait-on: http://localhost:5173
